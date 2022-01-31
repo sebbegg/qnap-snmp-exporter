@@ -30,11 +30,11 @@ jobs:
     - name: Build the Docker image
       run: |
         docker build . --file Dockerfile \
-        --tag ghcr.io/sebbegg/gnap-snmp-exporter:${{ github.run_id }} \
-        --tag ghcr.io/sebbegg/gnap-snmp-exporter:latest
+        --tag ghcr.io/sebbegg/qnap-snmp-exporter:${{ github.run_id }} \
+        --tag ghcr.io/sebbegg/qnap-snmp-exporter:latest
         
     - name: Push docker image
       run: |
         echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
-        docker push ghcr.io/sebbegg/gnap-snmp-exporter:${{ github.run_id }} ghcr.io/sebbegg/gnap-snmp-exporter:latest
+        docker push -a ghcr.io/sebbegg/qnap-snmp-exporter
     
