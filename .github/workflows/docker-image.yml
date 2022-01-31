@@ -35,6 +35,6 @@ jobs:
         
     - name: Push docker image
       run: |
-        echo $GITHUB_TOKEN | docker login --password-stdin -u sebbegg ghcr.io
+        echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
         docker push ghcr.io/sebbegg/gnap-snmp-exporter:${{ github.run_id }} ghcr.io/sebbegg/gnap-snmp-exporter:latest
     
