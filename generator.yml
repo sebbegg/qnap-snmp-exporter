@@ -1,0 +1,89 @@
+modules:
+  qnap_nas:
+    walk:
+      - raidStatus
+#      - systemFanSpeed
+#      - systemTemperatureEX
+#      - cpuUsage
+#      - cpuTemp
+#      - cpuIndex
+      - diskSmartInfo #  INTEGER {abnormal(2),warning(1),good(0),error(-1)}
+      - diskTemperture
+      - enclosureSystemTemp
+#      - sysVolumeFreeSize
+#      - sysVolumeTotalSize
+#      - sysUptime
+#      - sysFanSpeed
+#      - systemTotalMem
+#      - systemFreeMem
+#      - systemUsedMemory
+#      - systemAvailableMem
+#      - systemTemperature
+#      - ifPacketsSentEX
+#      - ifPacketsReceivedEX
+#      - ifErrorPacketsEX
+      - hdTemperature
+      - hdStatus
+      - hdSmartInfo
+      - hdModel
+      - iops
+    version: 2
+    max_repetitions: 5
+    retries: 3
+    timeout: 3s
+    lookups:
+      - source_indexes: [ifIndexEX]
+        lookup: ifDescrEX
+        drop_source_indexes: true
+      - source_indexes: [hdIndex]
+        lookup: hdDescr
+        drop_source_indexes: true
+      - source_indexes: [diskIndex]
+        lookup: hdDescr
+        drop_source_indexes: true
+      - source_indexes: [hdIndexEx]
+        lookup: hdDescrEx
+        drop_source_indexes: true
+      - source_indexes: [sysVolumeIndex]
+        lookup: volumeName
+        drop_source_indexes: true
+      - source_indexes: [enclosureIndex]
+        lookup: enclosureName
+        drop_source_indexes: true
+    overrides:
+      raidStatus:
+        regex_extracts:
+          "":
+            - regex: '.*Ready'
+              value: 1
+            - regex: '.*'
+              value: 0
+      systemTotalMem:
+        regex_extracts:
+          _mb:
+            - regex: '(.*) MB'
+              value: '$1'
+      systemAvailableMem:
+        regex_extracts:
+          _mb:
+            - regex: '(.*) MB'
+              value: '$1'
+      systemFreeMem:
+        regex_extracts:
+          _mb:
+            - regex: '(.*) MB'
+              value: '$1'
+      sysVolumeFreeSize:
+        regex_extracts:
+          _gb:
+            - regex: '(.*) GB'
+              value: '$1'
+      sysVolumeTotalSize:
+        regex_extracts:
+          _gb:
+            - regex: '(.*) GB'
+              value: '$1'
+      hdStatus:
+        type: EnumAsStateSet
+      diskSmartInfo:
+        type: EnumAsStateSet

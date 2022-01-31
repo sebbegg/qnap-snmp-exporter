@@ -1,0 +1,7 @@
+version: '3'
+services:
+  snmp-exporter:
+    build: .
+    image: ghcr.io/sebbegg/qnap-snmp-exporter
+    ports:
+      - 9116:9116
