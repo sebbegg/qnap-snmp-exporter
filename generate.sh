@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-docker run --rm -it -v "${PWD}:/opt" prom/snmp-generator generate
+docker run --rm -v "${PWD}:/opt" prom/snmp-generator generate

@@ -8,7 +8,6 @@ modules:
 #      - cpuTemp
 #      - cpuIndex
       - diskSmartInfo #  INTEGER {abnormal(2),warning(1),good(0),error(-1)}
-      - diskTemperture
       - enclosureSystemTemp
 #      - sysVolumeFreeSize
 #      - sysVolumeTotalSize
@@ -51,10 +50,26 @@ modules:
         lookup: enclosureName
         drop_source_indexes: true
     overrides:
-      raidStatus:
+      enclosureName:
+        type: DisplayString
+      hdDescr:
+        type: DisplayString
+      hdSmartInfo:
+        type: DisplayString
+      hdModel:
+        type: DisplayString
+      hdTemperature:
+        type: DisplayString
         regex_extracts:
-          "":
-            - regex: '.*Ready'
+          _celsius:
+            - regex: '(.*) C/.*'
+            - value: '$1'
+      raidStatus:
+        type: DisplayString
+        ignore: false
+        regex_extracts:
+          "Ready":
+            - regex: 'Ready'
               value: 1
             - regex: '.*'
               value: 0

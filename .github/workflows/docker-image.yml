@@ -1,0 +1,43 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+    
+env:
+  SNMP_EXPORTER_VERSION: 0.20.0
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Generate snmp.yml
+      run: |
+        ./generate.sh
+        
+    - name: Download snmp exporter
+      run: |
+        set -e
+        curl -sSLO https://github.com/prometheus/snmp_exporter/releases/download/v${SNMP_EXPORTER_VERSION}/snmp_exporter-${SNMP_EXPORTER_VERSION}.linux-amd64.tar.gz
+        tar -xzf snmp_exporter-${SNMP_EXPORTER_VERSION}.linux-amd64.tar.gz
+        
+    - name: Build the Docker image
+      run: |
+        docker build . --file Dockerfile \
+        --tag ghcr.io/sebbegg/qnap-snmp-exporter:${{ github.run_id }} \
+        --tag ghcr.io/sebbegg/qnap-snmp-exporter:latest
+        
+    - name: Push docker image
+      run: |
+        echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        docker push -a ghcr.io/sebbegg/qnap-snmp-exporter
+    
